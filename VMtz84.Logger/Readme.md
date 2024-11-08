@@ -1,10 +1,32 @@
 ﻿# Implementaciones de logger
 
+Este nuget contiene 3 componentes principales RequestResponseMiddleware, ExceptionMiddleware y HttpLoger. A continuación se describe en que consiste cada componente
+Estas Implementaciones usan MongoDB como base de datos y esta construida en C#.
+## RequestsResponsesMiddleware
+
+Registra las peticiones de entrada y salida al servicio, para configurar es necesario agregar en el appsettings el segmento:
+
+```bash
+"RequestResponseMongoDb": {
+    "ConnectionString": "mongodb://root:123456@192.168.1.142:27017/ClientesMs?ssl=false&authSource=admin",
+    "MongoDbName": "ClientesLog",
+    "CollectionName": "Peticiones",
+    "ApplicationName": "ClientesMs"
+}
+```
+
+Si no encuentra ninguna de las configuraciones arrojara una excepción.
+
+En caso de que no lo agregue y haya configurado serilog con mongo tomara los datos de serilog mongo y la coleccion la colocara como RequestsResponses, en el Program.cs agregue el middleware
+```bash
+app.UseMiddleware<RequestResponseMiddleware>();
+```
+
 ## RequestResponseMiddleware
 
 Este middleware es para registrar las entradas y salidas al servicio, este tiene un dependencia de serilog por lo que habra que configurar en el appsettings.json
 
-´´´Bash
+```bash
 "Serilog": {
     "Using": [],
     "MinimumLevel": {
@@ -30,7 +52,7 @@ Este middleware es para registrar las entradas y salidas al servicio, este tiene
       {
         "Name": "MongoDB",
         "Args": {
-          "databaseUrl": "mongodb+srv://superiorviktor:4hzYZt1lSTcBCycU@cluster0.53l4ojb.mongodb.net/ClientesLog",
+          "databaseUrl": "mongodb://root:123456@192.168.1.142:27017/ClientesMs?ssl=false&authSource=admin",
           "collectionName": "logs",
           "cappedMaxSizeMb": 1024,
           "cappedMaxDocuments": 100000
@@ -42,9 +64,10 @@ Este middleware es para registrar las entradas y salidas al servicio, este tiene
       "Application": "ClientesMs"
     }
   }
- ´´´
+ ```
   y en en el Program.cs agrega el segmento como sigue:
 
+```bash
   // Configura Serilog
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)  // Lee configuración desde appsettings.json
@@ -56,9 +79,13 @@ Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog();
 //Muestra el error de serilog
 //SelfLog.Enable(Console.Error);
+```
+Completo queda como el siguiente codigo Program.cs
 
-Para que lusca como se muestra a continuación:
-
+```bash
+using Serilog;
+using VMtz84.Logger.Loggers;
+using VMtz84.Logger.Middlewares;
 var builder = WebApplication.CreateBuilder(args);
 // Configura Serilog
 Log.Logger = new LoggerConfiguration()
@@ -99,20 +126,5 @@ app.Run();
 
 // Asegúrate de cerrar el logger al final del programa
 Log.CloseAndFlush();
+```bash
 
-## RequestsResponsesMiddleware
-
-Registra las peticiones de entrada y salida al servicio, para configurar es necesario agregar en el appsettings el segmento:
-
-"RequestResponseMongoDb": {
-    "ConnectionString": "mongodb://root:123456@localhost:27017/",
-    "MongoDbName": "ClientesLog",
-    "CollectionName": "Peticiones",
-    "ApplicationName": "ClientesMs"
-},
-
-Si no encuentra ninguna de las configuraciones arrojara una excepción.
-
-En caso de que no lo agregue tomara los datos de serilog mongo y la colccion la colocara como RequestsResponses, en el Program.cs agregue el middleware
-
-app.UseMiddleware<RequestResponseMiddleware>();
