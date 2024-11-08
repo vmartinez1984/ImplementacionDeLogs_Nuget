@@ -3,9 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VMtz84.Logger", "VMtz84.Logger\VMtz84.Logger.csproj", "{4FDEA358-AF2A-4D29-BBF7-9EF98AAE7D7D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VMtz84.Logger", "VMtz84.Logger\VMtz84.Logger.csproj", "{4FDEA358-AF2A-4D29-BBF7-9EF98AAE7D7D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{B459D81F-4E15-4337-96A1-20C2483C6F32}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test", "Test\Test.csproj", "{B459D81F-4E15-4337-96A1-20C2483C6F32}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{637D5605-708A-4A16-8830-2AD0655C1EB1}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

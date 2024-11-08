@@ -5,17 +5,31 @@
 		<Title>Implementación de logger</Title>
 		<Authors>Víctor Martínez</Authors>
 		<Company>Sin ningun lugar</Company>
-		<Description>Este nuget contiene 3 componentes principales RequestResponseMiddleware, ExceptionMiddleware y HttpLoger. A continuación se describe en que consiste cada componente
+		<Description>Este nuget contiene 2 componentes principales RequestResponseMiddleware, ExceptionMiddleware. A continuación se describe en que consiste cada componente
 Estas Implementaciones usan MongoDB como base de datos y esta construida en C#.</Description>
-		<PackageReadmeFile>Readme.md</PackageReadmeFile>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<FileVersion></FileVersion>
 		<AssemblyVersion></AssemblyVersion>
-		<Version>1.1.4</Version>
+		<Version>1.1.5</Version>
 		<Copyright>CopyLeft</Copyright>
 		<RepositoryUrl>https://github.com/vmartinez1984/ImplementacionDeLogs_Nuget.git</RepositoryUrl>
+		<PackageTags>Serilog Logger MongoDb</PackageTags>
+		<PackageReleaseNotes>Middlewares para el registro de peticiones al servicio y excepciones</PackageReleaseNotes>
+		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
 		<!--<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>-->
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Include="..\LICENSE.txt">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	  <None Include="..\README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
@@ -27,12 +41,5 @@ Estas Implementaciones usan MongoDB como base de datos y esta construida en C#.<
 		<PackageReference Include="Serilog.Sinks.Seq" Version="8.0.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
 		<PackageReference Include="Serilog.Sinks.MongoDB" Version="5.4.1" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Update="README.md">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
 	</ItemGroup>
 </Project>
