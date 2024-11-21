@@ -79,7 +79,9 @@ app.Run();
 ### Nota
 En Ocaciones no escribe el log, verifique y que no este el nugget
 
+```bash
 <PackageReference Include="MongoDB.Driver" Version="3.0.0" />
+```
 
 Quitelo limpie la solución, compile y pruebe de nuevo
 
