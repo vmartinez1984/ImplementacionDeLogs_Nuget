@@ -10,14 +10,13 @@ Estas Implementaciones usan MongoDB como base de datos y esta construida en C#.<
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<FileVersion></FileVersion>
 		<AssemblyVersion></AssemblyVersion>
-		<Version>1.1.5</Version>
+		<Version>1.2.6</Version>
 		<Copyright>CopyLeft</Copyright>
 		<RepositoryUrl>https://github.com/vmartinez1984/ImplementacionDeLogs_Nuget.git</RepositoryUrl>
 		<PackageTags>Serilog Logger MongoDb</PackageTags>
 		<PackageReleaseNotes>Middlewares para el registro de peticiones al servicio y excepciones</PackageReleaseNotes>
 		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-		<!--<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>-->
+		<ImplicitUsings>enable</ImplicitUsings>		
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -31,15 +30,12 @@ Estas Implementaciones usan MongoDB como base de datos y esta construida en C#.<
 	  </None>
 	</ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+	<ItemGroup>		
+		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.1.1" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="9.0.0" />		
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="MongoDB.Driver" Version="2.25.0" />
-		<PackageReference Include="Serilog.AspNetCore" Version="8.0.2" />
-		<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
-		<PackageReference Include="Serilog.Settings.Configuration" Version="8.0.2" />
-		<PackageReference Include="Serilog.Sinks.Seq" Version="8.0.0" />
-		<PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
-		<PackageReference Include="Serilog.Sinks.MongoDB" Version="5.4.1" />
+		<PackageReference Include="MongoDB.Driver" Version="3.0.0" />
+	
 	</ItemGroup>
 </Project>

@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System;
-using System.IO;
 using System.Text;
-using System.Threading.Tasks;
 using VMtz84.Logger.Entities;
+using VMtz84.Logger.Extensores;
 using VMtz84.Logger.Models;
 using VMtz84.Logger.Repositories;
 
@@ -78,11 +76,10 @@ namespace VMtz84.Logger.Middlewares
                 context.Request.Body = new MemoryStream(bytes);
             }
             requestDtoIn.ApplicationName = _applicationName;
-            //requestDtoIn.Curl = context.BuildCurlCommand();
+            requestDtoIn.Curl = context.BuildCurlCommand();
 
             return requestDtoIn;
         }
-
 
         /// <summary>
         /// Aqui extraemos los datos y los registramos, response

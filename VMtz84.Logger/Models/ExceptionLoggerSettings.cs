@@ -1,6 +1,6 @@
 ﻿namespace VMtz84.Logger.Models
 {
-    internal class ExceptionLoggerSettings
+    internal class HttpLoggerSettings
     {
         public string ConnectionString { get; set; }
         public string MongoDbName { get; set; }

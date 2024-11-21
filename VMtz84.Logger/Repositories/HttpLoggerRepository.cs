@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
 using VMtz84.Logger.Entities;
 using VMtz84.Logger.Models;
 
@@ -32,31 +30,20 @@ namespace VMtz84.Logger.Repositories
             }
             else
             {
-                //Si no existe leer serilog y si no existe arrojar Exception
-                string connetionString = configurations.GetSection("Serilog:WriteTo")
-                    .GetChildren()
-                    .FirstOrDefault(x => x["Name"] == "MongoDB")?["Args:databaseUrl"];
-                if (string.IsNullOrEmpty(connetionString))
-                    throw new Exception("No hay configuración para el loggeo de Requests y Responses");
-                mongoClient = new MongoClient(connetionString);
-                //Obtenermos el ultimo segmento para tener el nombre de la base de datos
-                mongoDatabase = mongoClient.GetDatabase(connetionString.Split('/').Last());
-                _collection = mongoDatabase.GetCollection<HttpLoggerEntity>("HttpLogger");
+                //Si no existe arrojar Exception
+                throw new Exception("No esta agregado en el appsettings.js el segmento HttpLoggerMongoDb");
             }
         }
 
-        public async Task<string> AgregarAsync(HttpLoggerEntity entity)
+        public async Task AgregarAsync(HttpLoggerEntity entity)
         {
             try
             {
-                await _collection.InsertOneAsync(entity);
-
-                return entity._id;
+                await _collection.InsertOneAsync(entity);                
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                Console.WriteLine(JsonConvert.SerializeObject(ex));
             }
         }
     }

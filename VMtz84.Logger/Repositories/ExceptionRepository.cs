@@ -1,31 +1,21 @@
 ﻿using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 using Newtonsoft.Json;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using VMtz84.Logger.Entities;
 using VMtz84.Logger.Models;
 
 namespace VMtz84.Logger.Repositories
 {
-    /// <summary>
-    /// Repositorio para mongoDb Donde se registrara la peticion
-    /// </summary>
-    public class RequestResponseRepository
+    internal class ExceptionRepository
     {
-        private readonly IMongoCollection<RequestResponseEntity> _collection;
-
-        /// <summary>
-        /// Colocamos la cadena de conexión, inserción a la db mongo
-        /// </summary>
-        /// <param name="configurations"></param>
-        public RequestResponseRepository(IConfiguration configurations)
+        private readonly IMongoCollection<ExceptionEntity> _collection;
+        private readonly string _applicationName;
+        public ExceptionRepository(IConfiguration configurations)
         {
             MongoClient mongoClient;
             IMongoDatabase mongoDatabase;
-
-            var settings = configurations.GetSection("RequestResponseMongoDb").Get<RequestResponseSettings>();
+            
+            var settings = configurations.GetSection("ExceptionLoggerMongoDb").Get<HttpLoggerSettings>();
             if (
                 settings != null &&
                 (
@@ -37,7 +27,8 @@ namespace VMtz84.Logger.Repositories
             {
                 mongoClient = new MongoClient(settings.ConnectionString);
                 mongoDatabase = mongoClient.GetDatabase(settings.MongoDbName);
-                _collection = mongoDatabase.GetCollection<RequestResponseEntity>(settings.CollectionName);
+                _collection = mongoDatabase.GetCollection<ExceptionEntity>(settings.CollectionName);
+                _applicationName = settings.ApplicationName;
             }
             else
             {
@@ -51,11 +42,12 @@ namespace VMtz84.Logger.Repositories
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public async Task AgregarAsync(RequestResponseEntity entity)
+        public async Task AgregarAsync(ExceptionEntity entity)
         {
             try
             {
-                await _collection.InsertOneAsync(entity);
+                entity.Application = _applicationName;
+                await _collection.InsertOneAsync(entity);                
             }
             catch (Exception ex)
             {
