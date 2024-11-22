@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
-using System.IO;
-using System.Net.Http;
 using System.Text;
 
 namespace VMtz84.Logger.Extensores
 {
-    internal static class CurlComando
+    public static class CurlComando
     {
         public static string BuildCurlCommand(this HttpContext context)
         {

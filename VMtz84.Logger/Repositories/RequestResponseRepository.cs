@@ -1,9 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 using Newtonsoft.Json;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using VMtz84.Logger.Entities;
 using VMtz84.Logger.Models;
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using VMtz84.Logger.Extensores;
 
 namespace Test.Controllers
 {
@@ -59,7 +60,7 @@ namespace Test.Controllers
             if (string.IsNullOrEmpty(saludo))
                 saludo = "Hola mundo";
 
-            return Ok(new { Mensaje = saludo, Fecha = DateTime.Now, Id = Guid.NewGuid() });
+            return Ok(new { Mensaje = saludo, Fecha = DateTime.Now, Id = Guid.NewGuid() });           
         }
     }
 }

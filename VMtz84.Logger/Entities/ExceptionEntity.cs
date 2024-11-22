@@ -1,9 +1,13 @@
-﻿using System;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson;
 
 namespace VMtz84.Logger.Entities
 {     
     public class ExceptionEntity
     {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string _id { get; set; }
         public DateTime Timestamp { get; set; }      
         public string MessageTemplate { get; set; }        
         public string Exception { get; set; }   
