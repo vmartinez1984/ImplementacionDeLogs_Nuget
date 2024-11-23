@@ -35,8 +35,6 @@ namespace VMtz84.Logger.Middlewares
             var settings = configuration.GetSection("RequestResponseMongoDb").Get<RequestResponseSettings>();
             if (settings != null && !string.IsNullOrEmpty(settings.ApplicationName))
                 _applicationName = settings.ApplicationName;
-            else
-                _applicationName = configuration.GetSection("Serilog:Properties:Application").Value;
             if (string.IsNullOrEmpty(_applicationName))
                 throw new Exception("No estan los settings de Resquest y Response");
         }
@@ -46,37 +44,30 @@ namespace VMtz84.Logger.Middlewares
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        private async Task<RequestResponseEntity> AnalizeRequest(HttpContext context)
+        public async Task<RequestResponseEntity> AnalizeRequest(HttpContext context)
         {
             RequestResponseEntity requestDtoIn;
+            string path;
+            string queryString;
+            string header;            
+            string method;
 
-            using (StreamReader stream = new StreamReader(context.Request.Body))
+            path = context.Request.Path;
+            queryString = context.Request.QueryString.Value;
+            header = JsonConvert.SerializeObject(context.Request.Headers).Replace("[", string.Empty).Replace("]", string.Empty);
+            method = context.Request.Method;
+
+            requestDtoIn = new RequestResponseEntity
             {
-                string path;
-                string queryString;
-                string header;
-                string body;
-                string method;
+                RequestBody = await context.Request.GetBodyAsync(),
+                RequestHeader = header,
+                RequestDateRegistration = DateTime.Now,
+                Path = path + queryString,
+                Method = method,
+                ApplicationName = _applicationName,
+                Curl = context.BuildCurlCommand()
+            };
 
-                path = context.Request.Path;
-                queryString = context.Request.QueryString.Value;
-                header = JsonConvert.SerializeObject(context.Request.Headers).Replace("[", string.Empty).Replace("]", string.Empty);
-                method = context.Request.Method;
-                body = await stream.ReadToEndAsync();
-                requestDtoIn = new RequestResponseEntity
-                {
-                    RequestBody = body,
-                    RequestHeader = header,
-                    RequestDateRegistration = DateTime.Now,
-                    Path = path + queryString,
-                    Method = method
-                };
-
-                byte[] bytes = Encoding.UTF8.GetBytes(body);
-                context.Request.Body = new MemoryStream(bytes);
-            }
-            requestDtoIn.ApplicationName = _applicationName;
-            requestDtoIn.Curl = context.BuildCurlCommand();
 
             return requestDtoIn;
         }
@@ -89,7 +80,7 @@ namespace VMtz84.Logger.Middlewares
         public async Task InvokeAsync(HttpContext context)
         {
             try
-            {                
+            {
                 RequestResponseEntity requestDtoIn;
 
                 requestDtoIn = await AnalizeRequest(context);
@@ -135,7 +126,7 @@ namespace VMtz84.Logger.Middlewares
             requestDtoIn.ResponseHeader = JsonConvert.SerializeObject(context.Response.Headers).Replace("[", string.Empty).Replace("]", string.Empty);
             requestDtoIn.StatusCode = context.Response.StatusCode;
             requestDtoIn.ResponseDateRegistration = DateTime.Now;
-            requestDtoIn.RequestId = context.TraceIdentifier;            
+            requestDtoIn.RequestId = context.TraceIdentifier;
         }
     }
 }

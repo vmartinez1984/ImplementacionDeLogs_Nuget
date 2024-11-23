@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System.Text;
 using VMtz84.Logger.Entities;
 using VMtz84.Logger.Extensores;
 using VMtz84.Logger.Repositories;
@@ -39,14 +38,12 @@ namespace VMtz84.Logger.Middlewares
         /// <returns></returns>
         public async Task InvokeAsync(HttpContext context)
         {
-
             try
             {
                 await next(context);
             }
             catch (Exception exception)
-            {
-                RequestResponseEntity requestDtoIn = await AnalizeRequest(context);
+            {                
                 string eventId = Guid.NewGuid().ToString();
                 context.Response.StatusCode = 500;
                 context.Response.ContentType = "application/json";
@@ -60,11 +57,11 @@ namespace VMtz84.Logger.Middlewares
                     RequestId = context.TraceIdentifier,
                     RequestPath = context.Request.Path,
                     Timestamp = DateTime.Now,
-                    Body = requestDtoIn.RequestBody,
-                    Header = requestDtoIn.RequestHeader,
-                    Path = requestDtoIn.Path,
-                    Method = requestDtoIn.Method,
-                    Curl = requestDtoIn.Curl,
+                    Body = await context.Request.GetBodyAsync(),
+                    Header = JsonConvert.SerializeObject(context.Request.Headers).Replace("[", string.Empty).Replace("]", string.Empty),
+                    Path = context.Request.Path,
+                    Method = context.Request.Method,
+                    Curl = context.BuildCurlCommand()
                 });
                 if (_mostrarError)
                     await context.Response.WriteAsync(JsonConvert.SerializeObject(new
@@ -88,43 +85,6 @@ namespace VMtz84.Logger.Middlewares
             }
         }
 
-        /// <summary>
-        /// Aqui extraemos los datos
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        private async Task<RequestResponseEntity> AnalizeRequest(HttpContext context)
-        {
-            RequestResponseEntity requestDtoIn;
-
-            using (StreamReader stream = new StreamReader(context.Request.Body))
-            {
-                string path;
-                string queryString;
-                string header;
-                string body;
-                string method;
-
-                path = context.Request.Path;
-                queryString = context.Request.QueryString.Value;
-                header = JsonConvert.SerializeObject(context.Request.Headers).Replace("[", string.Empty).Replace("]", string.Empty);
-                method = context.Request.Method;
-                body = await stream.ReadToEndAsync();
-                requestDtoIn = new RequestResponseEntity
-                {
-                    RequestBody = body,
-                    RequestHeader = header,
-                    RequestDateRegistration = DateTime.Now,
-                    Path = path + queryString,
-                    Method = method,
-                    Curl = context.BuildCurlCommand()
-                };
-
-                byte[] bytes = Encoding.UTF8.GetBytes(body);
-                context.Request.Body = new MemoryStream(bytes);
-            }
-
-            return requestDtoIn;
-        }
+        
     }//end class
 }

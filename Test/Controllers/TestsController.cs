@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using VMtz84.Logger.Extensores;
 
 namespace Test.Controllers
 {
@@ -50,6 +49,7 @@ namespace Test.Controllers
                 error = Guid.NewGuid().ToString();
             throw new Exception(error);
         }
+
         /// <summary>
         /// Hola mundo
         /// </summary>
@@ -60,7 +60,25 @@ namespace Test.Controllers
             if (string.IsNullOrEmpty(saludo))
                 saludo = "Hola mundo";
 
-            return Ok(new { Mensaje = saludo, Fecha = DateTime.Now, Id = Guid.NewGuid() });           
+            return Ok(new { Mensaje = saludo, Fecha = DateTime.Now, Id = Guid.NewGuid() });
         }
+
+        /// <summary>
+        /// Hola mundo
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("HolaMundo")]
+        public IActionResult HolaMundo([FromBody] HolaMundoDtoIn saludo)
+        {
+            if (string.IsNullOrEmpty(saludo.Saludo))
+                saludo.Saludo = "Hola mundo";
+
+            return Ok(new { saludo.Saludo, Fecha = DateTime.Now, Id = Guid.NewGuid() });
+        }
+    }
+
+    public class HolaMundoDtoIn
+    {
+        public string Saludo { get; set; }
     }
 }

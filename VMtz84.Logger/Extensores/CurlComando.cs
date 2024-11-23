@@ -26,9 +26,10 @@ namespace VMtz84.Logger.Extensores
             // Agrega el cuerpo de la solicitud (si existe y es un método que permite cuerpo, como POST o PUT)
             if (request.ContentLength > 0 && (request.Method == "POST" || request.Method == "PUT" || request.Method == "PATCH"))
             {
-                request.Body.Position = 0;
-                using var reader = new StreamReader(request.Body);
-                var body = reader.ReadToEnd();
+                //request.Body.Position = 0;
+                //using var reader = new StreamReader(request.Body);
+                //var body = reader.ReadToEnd();
+                var body = context.Request.GetBodyAsync();
                 curlCommand.Append($" -d \"{body}\"");
             }
 

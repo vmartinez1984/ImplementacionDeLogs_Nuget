@@ -36,11 +36,7 @@ namespace Test.Controllers
             .ToArray();
         }
 
-        [HttpDelete("Errores/{error}")]
-        public IActionResult Delete(string error) { 
-
-            throw new Exception(error);
-        }
+       
 
         [HttpGet("Tarjetas")]
         public async Task<IActionResult> ObtenerNumeroDeTarjeta()

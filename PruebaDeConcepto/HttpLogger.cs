@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Http.Logging;
 using VMtz84.Logger.Entities;
 using VMtz84.Logger.Repositories;
 using VMtz84.Logger.Extensores;
