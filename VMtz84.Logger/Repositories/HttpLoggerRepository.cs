@@ -9,12 +9,15 @@ namespace VMtz84.Logger.Repositories
     public class HttpLoggerRepository
     {
         private readonly IMongoCollection<HttpLoggerEntity> _collection;
+        private readonly string _name;        
+
         public HttpLoggerRepository(IConfiguration configurations)
         {
             MongoClient mongoClient;
             IMongoDatabase mongoDatabase;
 
             var settings = configurations.GetSection("HttpLoggerMongoDb").Get<HttpLoggerSettings>();
+            _name = settings.ApplicationName;
             if (
                 settings != null &&
                 (
@@ -32,13 +35,14 @@ namespace VMtz84.Logger.Repositories
             {
                 //Si no existe arrojar Exception
                 throw new Exception("No esta agregado en el appsettings.js el segmento HttpLoggerMongoDb");
-            }
+            }                      
         }
 
         public async Task AgregarAsync(HttpLoggerEntity entity)
         {
             try
             {
+                entity.ApplicationName = _name;                
                 await _collection.InsertOneAsync(entity);                
             }
             catch (Exception ex)

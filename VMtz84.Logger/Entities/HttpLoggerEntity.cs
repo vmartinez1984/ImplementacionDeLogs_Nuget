@@ -19,7 +19,9 @@ namespace VMtz84.Logger.Entities
         public int StatusCode { get; set; }
 
         public DateTime FechaDeRegistro { get; set; }
-        public double TiempoDeRespuesta { get; internal set; }
+        public double TiempoDeRespuesta { get;  set; }
         public string Curl { get; internal set; }
+        public string ApplicationName { get; set; }
+        public string Encodedkey { get; set; }
     }
 }

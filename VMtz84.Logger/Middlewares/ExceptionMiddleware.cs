@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using VMtz84.Logger.Entities;
 using VMtz84.Logger.Extensores;
+using VMtz84.Logger.Helpers;
 using VMtz84.Logger.Repositories;
 
 
@@ -12,7 +13,8 @@ namespace VMtz84.Logger.Middlewares
     {
         private readonly RequestDelegate next;
         private readonly bool _mostrarError;
-        private readonly ExceptionRepository _repository;
+        private readonly string _mensajeDeError;
+        private readonly IConfiguration _configuration;
 
         /// <summary>
         /// Se incializan los servicios
@@ -28,7 +30,8 @@ namespace VMtz84.Logger.Middlewares
             this.next = next;
             _mostrarError = false;
             bool.TryParse(configuration.GetSection("MostrarErrores").Value, out _mostrarError);
-            _repository = new ExceptionRepository(configuration);
+            _mensajeDeError = configuration.GetSection("MensajeDeError").Value;
+            _configuration = configuration;
         }
 
         /// <summary>
@@ -36,19 +39,22 @@ namespace VMtz84.Logger.Middlewares
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public async Task InvokeAsync(HttpContext context)
+        public async Task InvokeAsync(HttpContext context, IRequestGuidService requestGuidService)
         {
             try
             {
                 await next(context);
             }
             catch (Exception exception)
-            {                
+            {
+                var _repository = new ExceptionRepository(_configuration);
+                string encodedkey = requestGuidService.Encodedkey;
                 string eventId = Guid.NewGuid().ToString();
                 context.Response.StatusCode = 500;
                 context.Response.ContentType = "application/json";
                 _ = _repository.AgregarAsync(new ExceptionEntity
                 {
+                    Encodedkey = encodedkey,
                     Exception = exception.StackTrace,
                     MessageTemplate = exception.Message,
                     EventId = eventId,
@@ -77,7 +83,7 @@ namespace VMtz84.Logger.Middlewares
                 else
                     await context.Response.WriteAsync(JsonConvert.SerializeObject(new
                     {
-                        Mensaje = "El minge ya esta reiniciado el servidor",
+                        Mensaje = string.IsNullOrEmpty(_mensajeDeError) ? "El minge ya esta reiniciado el servidor" : _mensajeDeError,
                         Id = eventId,
                         RequestId = context.TraceIdentifier,
                         Date = DateTime.UtcNow
@@ -85,6 +91,6 @@ namespace VMtz84.Logger.Middlewares
             }
         }
 
-        
+
     }//end class
 }

@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 using Newtonsoft.Json;
+using System.Xml.Linq;
 using VMtz84.Logger.Entities;
+using VMtz84.Logger.Helpers;
 using VMtz84.Logger.Models;
 
 namespace VMtz84.Logger.Repositories
@@ -12,6 +14,7 @@ namespace VMtz84.Logger.Repositories
     public class RequestResponseRepository
     {
         private readonly IMongoCollection<RequestResponseEntity> _collection;
+        private readonly string _name;        
 
         /// <summary>
         /// Colocamos la cadena de conexión, inserción a la db mongo
@@ -23,6 +26,7 @@ namespace VMtz84.Logger.Repositories
             IMongoDatabase mongoDatabase;
 
             var settings = configurations.GetSection("RequestResponseMongoDb").Get<RequestResponseSettings>();
+            _name = settings.ApplicationName;
             if (
                 settings != null &&
                 (
@@ -41,6 +45,7 @@ namespace VMtz84.Logger.Repositories
                 //Si no existe arrojar Exception
                 throw new Exception("No esta agregado en el appsettings.js el segmento ExceptionLoggerMongoDb");
             }
+            
         }
 
         /// <summary>
@@ -52,6 +57,7 @@ namespace VMtz84.Logger.Repositories
         {
             try
             {
+                entity.ApplicationName = _name;                
                 await _collection.InsertOneAsync(entity);
             }
             catch (Exception ex)

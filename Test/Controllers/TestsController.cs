@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
+using VMtz84.Logger.Helpers;
 
 namespace Test.Controllers
 {
@@ -11,16 +13,27 @@ namespace Test.Controllers
     {
         private readonly IConfiguration configuration;
         private readonly ILogger<TestsController> logger;
+        private readonly IHttpClientFactory _clientFactory;
+        private readonly IRequestGuidService _requestGuidService;
+        private readonly string _url;
 
         /// <summary>
         /// Contructor
         /// </summary>
         /// <param name="configuration"></param>
         /// <param name="logger"></param>
-        public TestsController(IConfiguration configuration, ILogger<TestsController> logger)
+        public TestsController(
+            IConfiguration configuration
+            , IHttpClientFactory clientFactory
+            , ILogger<TestsController> logger
+            , IRequestGuidService requestGuidService
+        )
         {
             this.configuration = configuration;
             this.logger = logger;
+            _clientFactory = clientFactory;
+            _url = configuration.GetConnectionString("OxxoMs");
+            _requestGuidService = requestGuidService;
         }
 
         /// <summary>
@@ -75,7 +88,30 @@ namespace Test.Controllers
 
             return Ok(new { saludo.Saludo, Fecha = DateTime.Now, Id = Guid.NewGuid() });
         }
+
+        [HttpPost("HttpLogger/{numero}")]
+        public async Task<IActionResult> GetTarjetaAsync(int numero)
+        {
+
+            using (var client = _clientFactory.CreateClient())
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, _url);
+                request.Headers.Add("encodedkey", _requestGuidService.Encodedkey);
+                var response = await client.SendAsync(request);
+                if (response.IsSuccessStatusCode)
+                {
+                    JObject jObject;
+
+                    jObject = JObject.Parse(await response.Content.ReadAsStringAsync());
+
+                    return Ok(new { Tarjeta = jObject["numeroDeTarjeta"].ToString() });
+                }
+                else
+                    throw new Exception(await response.Content.ReadAsStringAsync());
+            }
+        }
     }
+
 
     public class HolaMundoDtoIn
     {

@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System.Text;
 using VMtz84.Logger.Entities;
 using VMtz84.Logger.Extensores;
+using VMtz84.Logger.Helpers;
 using VMtz84.Logger.Models;
 using VMtz84.Logger.Repositories;
 
@@ -17,9 +18,9 @@ namespace VMtz84.Logger.Middlewares
     public class RequestResponseMiddleware
     {
         private RequestDelegate _next;
-        private readonly RequestResponseRepository _requestRepository;
+        //private readonly RequestResponseRepository _requestRepository;
         private readonly string _applicationName;
-
+        private readonly IConfiguration _configuration;
         /// <summary>
         /// Constructor
         /// </summary>
@@ -27,11 +28,11 @@ namespace VMtz84.Logger.Middlewares
         /// <param name="configuration"></param>
         public RequestResponseMiddleware(
             RequestDelegate next,
-            IConfiguration configuration
+            IConfiguration configuration            
         )
         {
             _next = next;
-            _requestRepository = new RequestResponseRepository(configuration);
+            _configuration = configuration;
             var settings = configuration.GetSection("RequestResponseMongoDb").Get<RequestResponseSettings>();
             if (settings != null && !string.IsNullOrEmpty(settings.ApplicationName))
                 _applicationName = settings.ApplicationName;
@@ -51,14 +52,17 @@ namespace VMtz84.Logger.Middlewares
             string queryString;
             string header;            
             string method;
+            string encodedkey;
 
             path = context.Request.Path;
             queryString = context.Request.QueryString.Value;
             header = JsonConvert.SerializeObject(context.Request.Headers).Replace("[", string.Empty).Replace("]", string.Empty);
             method = context.Request.Method;
-
+            encodedkey = context.Request.Headers["encodedkey"].ToString();
+            
             requestDtoIn = new RequestResponseEntity
             {
+                Encodedkey = encodedkey,
                 RequestBody = await context.Request.GetBodyAsync(),
                 RequestHeader = header,
                 RequestDateRegistration = DateTime.Now,
@@ -77,13 +81,15 @@ namespace VMtz84.Logger.Middlewares
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public async Task InvokeAsync(HttpContext context)
+        public async Task InvokeAsync(HttpContext context, IRequestGuidService requestGuidService)
         {
             try
             {
                 RequestResponseEntity requestDtoIn;
-
+                var _requestRepository = new RequestResponseRepository(_configuration);
                 requestDtoIn = await AnalizeRequest(context);
+                requestDtoIn.Encodedkey = requestGuidService.Encodedkey;
+                context.Request.Headers.Add("encodedkey", requestGuidService.Encodedkey);
                 // Store the original body stream for restoring the response body back to its original stream
                 var originalBodyStream = context.Response.Body;
 

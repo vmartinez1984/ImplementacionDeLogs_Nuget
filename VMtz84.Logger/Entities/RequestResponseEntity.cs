@@ -1,6 +1,5 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
-using System;
 
 namespace VMtz84.Logger.Entities
 {
@@ -12,18 +11,19 @@ namespace VMtz84.Logger.Entities
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string _id { get; set; }
-        public string RequestBody { get; internal set; }
-        public string RequestHeader { get; internal set; }
-        public DateTime RequestDateRegistration { get; internal set; }
-        public string Path { get; internal set; }
-        public string Method { get; internal set; }
-        public string ResponseBody { get; internal set; }
-        public string ResponseHeader { get; internal set; }
-        public int StatusCode { get; internal set; }
+        public string RequestBody { get; set; }
+        public string RequestHeader { get; set; }
+        public DateTime RequestDateRegistration { get; set; }
+        public string Path { get; set; }
+        public string Method { get; set; }
+        public string ResponseBody { get; set; }
+        public string ResponseHeader { get; set; }
+        public int StatusCode { get; set; }
         public DateTime ResponseDateRegistration { get; set; }
         public string RequestId { get; set; }
 
         public string ApplicationName { get; set; }
-        public string Curl { get; internal set; }
+        public string Curl { get; set; }
+        public string Encodedkey { get; set; }
     }
 }

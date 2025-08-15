@@ -9,7 +9,7 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<FileVersion></FileVersion>
 		<AssemblyVersion></AssemblyVersion>
-		<Version>1.2.7</Version>
+		<Version>1.2.8</Version>
 		<Copyright>CopyLeft</Copyright>
 		<RepositoryUrl>https://github.com/vmartinez1984/ImplementacionDeLogs_Nuget.git</RepositoryUrl>
 		<PackageTags>Serilog Logger MongoDb</PackageTags>

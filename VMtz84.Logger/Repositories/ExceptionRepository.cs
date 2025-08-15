@@ -2,6 +2,7 @@
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using VMtz84.Logger.Entities;
+using VMtz84.Logger.Helpers;
 using VMtz84.Logger.Models;
 
 namespace VMtz84.Logger.Repositories
@@ -9,7 +10,8 @@ namespace VMtz84.Logger.Repositories
     internal class ExceptionRepository
     {
         private readonly IMongoCollection<ExceptionEntity> _collection;
-        private readonly string _applicationName;
+        private readonly string _applicationName;        
+
         public ExceptionRepository(IConfiguration configurations)
         {
             MongoClient mongoClient;
@@ -34,7 +36,7 @@ namespace VMtz84.Logger.Repositories
             {
                 //Si no existe arrojar Exception
                 throw new Exception("No esta agregado en el appsettings.js el segmento ExceptionLoggerMongoDb");
-            }
+            }            
         }
 
         /// <summary>
@@ -46,7 +48,7 @@ namespace VMtz84.Logger.Repositories
         {
             try
             {
-                entity.Application = _applicationName;
+                entity.Application = _applicationName;                
                 await _collection.InsertOneAsync(entity);                
             }
             catch (Exception ex)

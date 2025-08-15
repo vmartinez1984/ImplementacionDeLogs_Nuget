@@ -21,5 +21,6 @@ namespace VMtz84.Logger.Entities
         public string Path { get; internal set; }
         public string Method { get; internal set; }
         public string Curl { get; internal set; }
+        public string Encodedkey { get; internal set; }
     }
 }

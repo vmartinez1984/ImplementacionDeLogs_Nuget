@@ -3,6 +3,51 @@
 Este nuget contiene 3 componentes principales RequestResponseMiddleware, ExceptionMiddleware y HttpLoger. A continuación se describe en que consiste cada componente
 Estas Implementaciones usan MongoDB como base de datos y esta construida en C#.
 
+## HttpLogger
+El http loger intercepta la petición que se envia a traves del HppClientFactory, para agregar en el log
+
+En el program agregue
+```bash
+builder.Services.AgregarHttpLoger();
+```
+
+Cuando haga la petición mediante el factory, agregue en el contructor de su servicio
+```bash
+private readonly IRequestGuidService _requestGuidService;
+
+public Servicio(IRequestGuidService requestGuidService)
+{
+    _requestGuidService = requestGuidService
+}
+```
+
+Agregue en eñ header
+```bash
+request.Headers.Add("encodedkey", _requestGuidService.Encodedkey);
+```
+
+Para que quede como el siguiente fragmento
+```bash
+ using (var client = _clientFactory.CreateClient())
+{
+    var request = new HttpRequestMessage(HttpMethod.Get, _url);
+    request.Headers.Add("encodedkey", _requestGuidService.Encodedkey);
+    var response = await client.SendAsync(request);
+    if (response.IsSuccessStatusCode)
+    {
+        JObject jObject;
+
+        jObject = JObject.Parse(await response.Content.ReadAsStringAsync());
+
+        return Ok(new { Tarjeta = jObject["numeroDeTarjeta"].ToString() });
+    }
+    else
+        throw new Exception(await response.Content.ReadAsStringAsync());
+}
+```
+
+Asi el mismo guid queda registrado en los Middleware y pueda hacer la realación
+
 ## RequestsResponsesMiddleware
 
 Registra las peticiones de entrada y salida al servicio, para configurar es necesario agregar en el appsettings el segmento:
