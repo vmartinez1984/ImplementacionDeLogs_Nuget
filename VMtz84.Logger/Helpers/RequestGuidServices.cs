@@ -5,6 +5,8 @@ namespace VMtz84.Logger.Helpers
     public interface IRequestGuidService
     {
         string Encodedkey { get; }
+
+        void SetEncodedkey(string encodedkey);
     }
 
     public class RequestGuidService : IRequestGuidService
@@ -16,16 +18,22 @@ namespace VMtz84.Logger.Helpers
             Encodedkey = Guid.NewGuid().ToString();
         }
 
-        public string Encodedkey { get; } 
+        public string Encodedkey { get; private set; }
 
         public static RequestGuidService GetInstance()
         {
             if (_instance == null)
             {
-                _instance = new RequestGuidService();                
+                _instance = new RequestGuidService();
             }
             return _instance;
         }
+
+        public void SetEncodedkey(string encodedkey)
+        {
+            this.Encodedkey = encodedkey;
+        }
+
     }
 
 }

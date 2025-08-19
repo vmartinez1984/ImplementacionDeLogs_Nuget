@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
+using VMtz84.Logger.Extensores;
 using VMtz84.Logger.Helpers;
 
 namespace Test.Controllers
@@ -96,8 +97,8 @@ namespace Test.Controllers
             using (var client = _clientFactory.CreateClient())
             {
                 var request = new HttpRequestMessage(HttpMethod.Get, _url);
-                request.Headers.Add("encodedkey", _requestGuidService.Encodedkey);
-                var response = await client.SendAsync(request);
+                request.AgregarHeaderDeEncodedKey(_requestGuidService);
+                var response = await client.SendAsync(request);                
                 if (response.IsSuccessStatusCode)
                 {
                     JObject jObject;

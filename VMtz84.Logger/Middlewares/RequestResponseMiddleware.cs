@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using System.Text;
 using VMtz84.Logger.Entities;
@@ -28,7 +29,7 @@ namespace VMtz84.Logger.Middlewares
         /// <param name="configuration"></param>
         public RequestResponseMiddleware(
             RequestDelegate next,
-            IConfiguration configuration            
+            IConfiguration configuration
         )
         {
             _next = next;
@@ -50,7 +51,7 @@ namespace VMtz84.Logger.Middlewares
             RequestResponseEntity requestDtoIn;
             string path;
             string queryString;
-            string header;            
+            string header;
             string method;
             string encodedkey;
 
@@ -59,7 +60,7 @@ namespace VMtz84.Logger.Middlewares
             header = JsonConvert.SerializeObject(context.Request.Headers).Replace("[", string.Empty).Replace("]", string.Empty);
             method = context.Request.Method;
             encodedkey = context.Request.Headers["encodedkey"].ToString();
-            
+
             requestDtoIn = new RequestResponseEntity
             {
                 Encodedkey = encodedkey,
@@ -89,7 +90,7 @@ namespace VMtz84.Logger.Middlewares
                 var _requestRepository = new RequestResponseRepository(_configuration);
                 requestDtoIn = await AnalizeRequest(context);
                 requestDtoIn.Encodedkey = requestGuidService.Encodedkey;
-                context.Request.Headers.Add("encodedkey", requestGuidService.Encodedkey);
+
                 // Store the original body stream for restoring the response body back to its original stream
                 var originalBodyStream = context.Response.Body;
 

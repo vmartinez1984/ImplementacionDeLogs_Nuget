@@ -48,16 +48,14 @@ namespace VMtz84.Logger.Middlewares
             catch (Exception exception)
             {
                 var _repository = new ExceptionRepository(_configuration);
-                string encodedkey = requestGuidService.Encodedkey;
-                string eventId = Guid.NewGuid().ToString();
+                string encodedkey = requestGuidService.Encodedkey;                
                 context.Response.StatusCode = 500;
                 context.Response.ContentType = "application/json";
                 _ = _repository.AgregarAsync(new ExceptionEntity
                 {
                     Encodedkey = encodedkey,
                     Exception = exception.StackTrace,
-                    MessageTemplate = exception.Message,
-                    EventId = eventId,
+                    MessageTemplate = exception.Message,                    
                     Application = string.Empty,
                     ConnectionId = context.Connection.Id,
                     RequestId = context.TraceIdentifier,
@@ -76,7 +74,7 @@ namespace VMtz84.Logger.Middlewares
                         Source = exception.Source,
                         StackTrace = exception.StackTrace,
                         InnerException = exception.InnerException,
-                        EventId = eventId,
+                        EventId = encodedkey,
                         RequestId = context.TraceIdentifier,
                         Date = DateTime.UtcNow
                     }));
@@ -84,8 +82,7 @@ namespace VMtz84.Logger.Middlewares
                     await context.Response.WriteAsync(JsonConvert.SerializeObject(new
                     {
                         Mensaje = string.IsNullOrEmpty(_mensajeDeError) ? "El minge ya esta reiniciado el servidor" : _mensajeDeError,
-                        Id = eventId,
-                        RequestId = context.TraceIdentifier,
+                        Encodedkey = encodedkey,                        
                         Date = DateTime.UtcNow
                     }));
             }

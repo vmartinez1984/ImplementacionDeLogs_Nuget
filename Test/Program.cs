@@ -1,5 +1,4 @@
 using VMtz84.Logger.Extensores;
-using VMtz84.Logger.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,8 +14,7 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseMiddleware<RequestResponseMiddleware>();
-app.UseMiddleware<ExceptionMiddleware>();
+app.UseRequestResponseExceptionYHeaders();
 
 app.UseHttpsRedirection();
 

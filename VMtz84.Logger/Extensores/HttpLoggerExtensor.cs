@@ -1,6 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 using VMtz84.Logger.Helpers;
 using VMtz84.Logger.Loggers;
+using VMtz84.Logger.Middlewares;
 
 namespace VMtz84.Logger.Extensores
 {
@@ -17,14 +19,42 @@ namespace VMtz84.Logger.Extensores
             services.AddScoped<HttpLogger>();
             //Misma instancia durante toda la petición HTTP, pero diferente para cada petición.
             services.AddScoped<IRequestGuidService, RequestGuidService>();
-
-            //services.AddScoped<RequestGuidDelegatingHandler>();
+                        
             //HttpClientFactory
             services.AddHttpClient(string.Empty, client => { })
-                .RemoveAllLoggers().AddLogger<HttpLogger>()
-            //    .AddHttpMessageHandler<RequestGuidDelegatingHandler>()
-            //    .Services.AddScoped<IRequestGuidService, RequestGuidService>();
+                .RemoveAllLoggers().AddLogger<HttpLogger>()           
                ;
+        }
+
+
+        public static IApplicationBuilder UseRequestResponseExceptionYHeaders(this IApplicationBuilder builder)
+        {
+            builder.UseMiddleware<HeadersMiddleware>();
+            builder.UseMiddleware<ExceptionMiddleware>();
+            builder.UseMiddleware<HeadersMiddleware>();
+
+            return builder;
+        }
+
+        public static IApplicationBuilder UseRequestResponse(this IApplicationBuilder builder)
+        {
+            builder.UseMiddleware<HeadersMiddleware>();            
+
+            return builder;
+        }
+
+        public static IApplicationBuilder UseYException(this IApplicationBuilder builder)
+        {            
+            builder.UseMiddleware<ExceptionMiddleware>();
+
+            return builder;
+        }
+
+        public static IApplicationBuilder UseHeaders(this IApplicationBuilder builder)
+        {
+            builder.UseMiddleware<HeadersMiddleware>();
+
+            return builder;
         }
     }
 }

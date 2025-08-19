@@ -132,3 +132,6 @@ Quitelo limpie la solución, compile y pruebe de nuevo
 
 ### Todo
 - Agregar controller test a peticón de configuración
+- Simplificar la confiración del appsettings
+- Si en el header viene guid o encodedkey este numero pasarlo como encodedkey de los repositorios
+- Hacer un extensor para el header del servicio
