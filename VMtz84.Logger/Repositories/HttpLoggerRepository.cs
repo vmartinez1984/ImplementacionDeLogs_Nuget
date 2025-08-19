@@ -16,20 +16,20 @@ namespace VMtz84.Logger.Repositories
             MongoClient mongoClient;
             IMongoDatabase mongoDatabase;
 
-            var settings = configurations.GetSection("HttpLoggerMongoDb").Get<HttpLoggerSettings>();
+            var settings = configurations.GetSection("LoggerMongoDb").Get<LoggerSettings>();
             _name = settings.ApplicationName;
             if (
                 settings != null &&
                 (
                     !string.IsNullOrEmpty(settings.ConnectionString)
                     && !string.IsNullOrEmpty(settings.MongoDbName)
-                    && !string.IsNullOrEmpty(settings.CollectionName)
+                    && !string.IsNullOrEmpty(settings.CollectionNameHttpLogger)
                 )
             )
             {
                 mongoClient = new MongoClient(settings.ConnectionString);
                 mongoDatabase = mongoClient.GetDatabase(settings.MongoDbName);
-                _collection = mongoDatabase.GetCollection<HttpLoggerEntity>(settings.CollectionName);
+                _collection = mongoDatabase.GetCollection<HttpLoggerEntity>(settings.CollectionNameHttpLogger);
             }
             else
             {

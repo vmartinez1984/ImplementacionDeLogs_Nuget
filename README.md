@@ -21,9 +21,11 @@ public Servicio(IRequestGuidService requestGuidService)
 }
 ```
 
-Agregue en eñ header
+Agregue en el factory
 ```bash
-request.Headers.Add("encodedkey", _requestGuidService.Encodedkey);
+using VMtz84.Logger.Extensores;
+
+request.AgregarHeaderDeEncodedKey(_requestGuidService);
 ```
 
 Para que quede como el siguiente fragmento
@@ -133,5 +135,4 @@ Quitelo limpie la solución, compile y pruebe de nuevo
 ### Todo
 - Agregar controller test a peticón de configuración
 - Simplificar la confiración del appsettings
-- Si en el header viene guid o encodedkey este numero pasarlo como encodedkey de los repositorios
-- Hacer un extensor para el header del servicio
+- Headers personalizados en el appsetiings

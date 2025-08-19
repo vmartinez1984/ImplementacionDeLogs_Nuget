@@ -50,6 +50,11 @@ namespace VMtz84.Logger.Extensores
             return builder;
         }
 
+        /// <summary>
+        /// Agrega el header de encodedkey y la lista que hay configurado en en appsettings
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <returns></returns>
         public static IApplicationBuilder UseHeaders(this IApplicationBuilder builder)
         {
             builder.UseMiddleware<HeadersMiddleware>();

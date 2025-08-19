@@ -14,9 +14,10 @@ namespace VMtz84.Logger.Middlewares
     /// </summary>
     public class HeadersMiddleware
     {
-        private RequestDelegate _next;        
-        
+        private RequestDelegate _next;
+
         private readonly IConfiguration _configuration;
+        private readonly LoggerSettings _loggerSettings;
         /// <summary>
         /// Constructor
         /// </summary>
@@ -30,6 +31,7 @@ namespace VMtz84.Logger.Middlewares
             _next = next;
             _configuration = configuration;
             // Agregaremos los header que se coloquen en el appsettings
+            _loggerSettings = configuration.GetSection("LoggerMongoDb").Get<LoggerSettings>();
         }
 
         /// <summary>
@@ -41,16 +43,22 @@ namespace VMtz84.Logger.Middlewares
         {
             if (context.Request.Headers.TryGetValue("encodedkey", out StringValues encodedkey))
             {
-                context.Request.Headers.Add("encodedkey", encodedkey);
-                requestGuidService.SetEncodedkey(encodedkey);
+                if (requestGuidService.Encodedkey != encodedkey)
+                    requestGuidService.SetEncodedkey(encodedkey);
             }
             else
             {
                 context.Request.Headers.Add("encodedkey", requestGuidService.Encodedkey);
             }
+            //Agregar los headers
+            foreach (var item in _loggerSettings.Headers)
+            {
+                if (!context.Response.Headers.TryGetValue(item.Key, out StringValues header))
+                    context.Response.Headers.Add(item.Key, item.Value);
+            }
 
             // Call the next middleware
             await _next(context);
-        }       
+        }
     }
 }

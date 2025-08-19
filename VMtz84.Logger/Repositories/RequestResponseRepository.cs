@@ -25,20 +25,20 @@ namespace VMtz84.Logger.Repositories
             MongoClient mongoClient;
             IMongoDatabase mongoDatabase;
 
-            var settings = configurations.GetSection("RequestResponseMongoDb").Get<RequestResponseSettings>();
+            var settings = configurations.GetSection("LoggerMongoDb").Get<LoggerSettings>();
             _name = settings.ApplicationName;
             if (
                 settings != null &&
                 (
                     !string.IsNullOrEmpty(settings.ConnectionString)
                     && !string.IsNullOrEmpty(settings.MongoDbName)
-                    && !string.IsNullOrEmpty(settings.CollectionName)
+                    && !string.IsNullOrEmpty(settings.CollectionNameExceptions)
                 )
             )
             {
                 mongoClient = new MongoClient(settings.ConnectionString);
                 mongoDatabase = mongoClient.GetDatabase(settings.MongoDbName);
-                _collection = mongoDatabase.GetCollection<RequestResponseEntity>(settings.CollectionName);
+                _collection = mongoDatabase.GetCollection<RequestResponseEntity>(settings.CollectionNameExceptions);
             }
             else
             {

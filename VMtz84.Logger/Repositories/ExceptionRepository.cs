@@ -17,25 +17,25 @@ namespace VMtz84.Logger.Repositories
             MongoClient mongoClient;
             IMongoDatabase mongoDatabase;
             
-            var settings = configurations.GetSection("ExceptionLoggerMongoDb").Get<HttpLoggerSettings>();
+            var settings = configurations.GetSection("LoggerMongoDb").Get<LoggerSettings>();
             if (
                 settings != null &&
                 (
                     !string.IsNullOrEmpty(settings.ConnectionString)
                     && !string.IsNullOrEmpty(settings.MongoDbName)
-                    && !string.IsNullOrEmpty(settings.CollectionName)
+                    && !string.IsNullOrEmpty(settings.CollectionNameHttpLogger)
                 )
             )
             {
                 mongoClient = new MongoClient(settings.ConnectionString);
                 mongoDatabase = mongoClient.GetDatabase(settings.MongoDbName);
-                _collection = mongoDatabase.GetCollection<ExceptionEntity>(settings.CollectionName);
+                _collection = mongoDatabase.GetCollection<ExceptionEntity>(settings.CollectionNameExceptions);
                 _applicationName = settings.ApplicationName;
             }
             else
             {
                 //Si no existe arrojar Exception
-                throw new Exception("No esta agregado en el appsettings.js el segmento ExceptionLoggerMongoDb");
+                throw new Exception("No esta agregado en el appsettings.js la configuracón LoggerMongoDb");
             }            
         }
 

@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using VMtz84.Logger.Entities;
 using VMtz84.Logger.Extensores;
 using VMtz84.Logger.Helpers;
+using VMtz84.Logger.Models;
 using VMtz84.Logger.Repositories;
 
 
@@ -30,7 +31,8 @@ namespace VMtz84.Logger.Middlewares
             this.next = next;
             _mostrarError = false;
             bool.TryParse(configuration.GetSection("MostrarErrores").Value, out _mostrarError);
-            _mensajeDeError = configuration.GetSection("MensajeDeError").Value;
+            var settings = configuration.GetSection("LoggerMongoDb").Get<LoggerSettings>();
+            _mensajeDeError = settings.ErrorMessage;
             _configuration = configuration;
         }
 
